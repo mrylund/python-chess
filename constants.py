@@ -1,0 +1,15 @@
+WHITE_KING =    '\033[96m' + '♔' + '\x1b[0m'
+WHITE_QUEEN =   '\033[96m' + '♕' + '\x1b[0m'
+WHITE_ROOK =    '\033[96m' + '♖' + '\x1b[0m'
+WHITE_BISHOP =  '\033[96m' + '♗' + '\x1b[0m'
+WHITE_KNIGHT =  '\033[96m' + '♘' + '\x1b[0m'
+WHITE_PAWN =    '\033[96m' + '♙' + '\x1b[0m'
+
+BLACK_KING =    '\033[91m' + '♚' + '\x1b[0m'
+BLACK_QUEEN =   '\033[91m' + '♛' + '\x1b[0m'
+BLACK_ROOK =    '\033[91m' + '♜' + '\x1b[0m'
+BLACK_BISHOP =  '\033[91m' + '♝' + '\x1b[0m'
+BLACK_KNIGHT =  '\033[91m' + '♞' + '\x1b[0m'
+BLACK_PAWN =    '\033[91m' + '♟︎' + '\x1b[0m'
+
+EMPTY = '-'
