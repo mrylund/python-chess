@@ -1,15 +1,54 @@
-WHITE_KING =    '\033[96m' + '♔' + '\x1b[0m'
-WHITE_QUEEN =   '\033[96m' + '♕' + '\x1b[0m'
-WHITE_ROOK =    '\033[96m' + '♖' + '\x1b[0m'
-WHITE_BISHOP =  '\033[96m' + '♗' + '\x1b[0m'
-WHITE_KNIGHT =  '\033[96m' + '♘' + '\x1b[0m'
-WHITE_PAWN =    '\033[96m' + '♙' + '\x1b[0m'
+from enum import IntEnum
 
-BLACK_KING =    '\033[91m' + '♚' + '\x1b[0m'
-BLACK_QUEEN =   '\033[91m' + '♛' + '\x1b[0m'
-BLACK_ROOK =    '\033[91m' + '♜' + '\x1b[0m'
-BLACK_BISHOP =  '\033[91m' + '♝' + '\x1b[0m'
-BLACK_KNIGHT =  '\033[91m' + '♞' + '\x1b[0m'
-BLACK_PAWN =    '\033[91m' + '♟︎' + '\x1b[0m'
+class Color(IntEnum):
+    WHITE = 0
+    BLACK = 1
 
-EMPTY = '-'
+    def __invert__(self):
+        if self == Color.WHITE:
+            return Color.BLACK
+        else:
+            return Color.WHITE
+
+
+class Piece(IntEnum):
+    PAWN = 0
+    KNIGHT = 1
+    BISHOP = 2
+    ROOK = 3
+    QUEEN = 4
+    KING = 5
+
+    def to_char(self):
+        if self == Piece.PAWN:
+            return 'p'
+        elif self == Piece.KNIGHT:
+            return 'n'
+        elif self == Piece.BISHOP:
+            return 'b'
+        elif self == Piece.ROOK:
+            return 'r'
+        elif self == Piece.QUEEN:
+            return 'q'
+        elif self == Piece.KING:
+            return 'k'
+
+class Rank(IntEnum):
+    ONE = 0
+    TWO = 1
+    THREE = 2
+    FOUR = 3
+    FIVE = 4
+    SIX = 5
+    SEVEN = 6
+    EIGHT = 7
+
+class File(IntEnum):
+    A = 0
+    B = 1
+    C = 2
+    D = 3
+    E = 4
+    F = 5
+    G = 6
+    H = 7
