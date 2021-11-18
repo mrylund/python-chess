@@ -2,8 +2,6 @@ from chessboard import ChessBoard
 from move import Move
 from square import Square
 from constants import Piece
-import search
-
 
 def get_move():
     src = input("From: ")

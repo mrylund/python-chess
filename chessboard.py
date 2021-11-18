@@ -13,20 +13,57 @@ class ChessBoard(object):
 
     def  __str__(self):
         board_str = []
+        linenum = 0
         for r in reversed(Rank):
+            linenum += 1
+            board_str.append(str(linenum) + ' ')
             for f in File:
                 sq = Square.from_position(r, f)
                 white_piece = self.piece_on(sq, Color.WHITE)
                 black_piece = self.piece_on(sq, Color.BLACK)
                 if white_piece is not None:
-                    board_str.append(white_piece.to_char().upper())
+                    board_str.append('\033[96m')
+                    if white_piece == Piece.ROOK:
+                        board_str.append('♖')
+                    elif white_piece == Piece.KNIGHT:
+                        board_str.append('♘')
+                    elif white_piece == Piece.BISHOP:
+                        board_str.append('♗')
+                    elif white_piece == Piece.QUEEN:
+                        board_str.append('♕')
+                    elif white_piece == Piece.KING:
+                        board_str.append('♔')
+                    elif white_piece == Piece.PAWN:
+                        board_str.append('♙')
+
+                    board_str.append('\x1b[0m')
                 elif black_piece is not None:
-                    board_str.append(black_piece.to_char())
+                    board_str.append('\033[91m')
+                    if black_piece == Piece.ROOK:
+                        board_str.append('♖')
+                    elif black_piece == Piece.KNIGHT:
+                        board_str.append('♘')
+                    elif black_piece == Piece.BISHOP:
+                        board_str.append('♗')
+                    elif black_piece == Piece.QUEEN:
+                        board_str.append('♕')
+                    elif black_piece == Piece.KING:
+                        board_str.append('♔')
+                    elif black_piece == Piece.PAWN:
+                        board_str.append('♙')
+
+                    board_str.append('\x1b[0m')
                 else:
-                    board_str.append('.')
+                    board_str.append('-')
+                
+                board_str.append(' ')
+
+                
+            board_str.append(str(linenum))
             board_str.append('\n')
         board_str = ''.join(board_str)
         info_str = "%s to move" % self.color.name
+        board_str = '- a b c d e f g h -\n' + board_str + '- a b c d e f g h -\n\n'
         return "%s%s" % (board_str, info_str)
 
     def get_piece_bb(self, piece, color=None):
