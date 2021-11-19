@@ -1,3 +1,4 @@
+from ai.eval import evaluate
 from chessboard import ChessBoard
 from move import Move
 from square import Square
@@ -37,6 +38,7 @@ def main():
             print("\n")
             player_move = get_move()
             board = board.apply_move(player_move)
+            evaluate(board)
             print("\n")
             print("Board is now:")
             print(board)

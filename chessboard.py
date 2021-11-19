@@ -13,9 +13,9 @@ class ChessBoard(object):
 
     def  __str__(self):
         board_str = []
-        linenum = 0
+        linenum = 9
         for r in reversed(Rank):
-            linenum += 1
+            linenum -= 1
             board_str.append(str(linenum) + ' ')
             for f in File:
                 sq = Square.from_position(r, f)
