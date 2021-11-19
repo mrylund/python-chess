@@ -21,24 +21,36 @@ def main():
     print("\n")
     print(board)
     print("\n")
+    print("Who starts? ( type \"H\" or \"AI\" )")
+    print("\n")
+    player_turn = "H"
+    first_player = input()
+    
+    if(first_player == "H"):
+        player_turn = "H"
+    elif(first_player == "AI"):
+        player_turn = "AI"
 
     while True:
-        print("Enter your move")
-        print("\n")
-        player_move = get_move()
-        board = board.apply_move(player_move)
-        print("\n")
-        print("Board is now:")
-        print(board)
-        print("\n")
-
-        engine_move = get_move()
-        print(engine_move)
-        board = board.apply_move(engine_move)
-        print("\n")
-        print("Board is now:")
-        print(board)
-        print("\n")
+        if(player_turn == "H"): 
+            print("Enter your move")
+            print("\n")
+            player_move = get_move()
+            board = board.apply_move(player_move)
+            print("\n")
+            print("Board is now:")
+            print(board)
+            print("\n")
+            player_turn = "AI"
+        elif(player_turn == "AI"):
+            engine_move = get_move()
+            print(engine_move)
+            board = board.apply_move(engine_move)
+            print("\n")
+            print("Board is now:")
+            print(board)
+            print("\n")
+            player_turn = "H"
 
 
 if __name__ == "__main__":
