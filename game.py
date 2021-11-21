@@ -46,7 +46,7 @@ def main():
     print("Who starts? ( type \"H\" or \"AI\" )")
     print("\n")
     player_turn = "H"
-    
+
     while True:
         first_player = input().upper()
         if(check_start_player_input(first_player)):
