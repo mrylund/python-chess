@@ -4,6 +4,7 @@ from move import Move
 from square import Square
 from constants import Piece, Color
 import re
+import ai.search as ai
 
 def check_user_input_in_game(user_input):
     if re.match('([A-Ha-h][1-8])', user_input):
@@ -85,7 +86,8 @@ def main():
             print("\n")
             player_turn = "AI"
         elif(player_turn == "AI"):
-            engine_move = get_move(board)
+            engine_move = ai.find_best_move(board, 15)
+            #engine_move = get_move(board)
             print(engine_move)
             board = board.apply_move(engine_move)
             print("\n")
