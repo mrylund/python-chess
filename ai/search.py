@@ -58,7 +58,7 @@ def iterative_deepening_search(board, time_limit):
         if current_time >= end_time:
             break
         
-        score = search(board, depth, start_time, time_limit)
+        score = -search(board, depth, start_time, time_limit)
 
         depth += 1
     
@@ -76,7 +76,6 @@ def find_best_move(board, time_limit):
     search_time_limit = time_limit / move_num
     for move  in movegen.gen_legal_moves(board):
         score = iterative_deepening_search(board.apply_move(move), search_time_limit)
-        score = 0
         if score > max:
             max = score
             best_move = move
