@@ -3,10 +3,31 @@ from chessboard import ChessBoard
 from move import Move
 from square import Square
 from constants import Piece
+import re
+
+def check_user_input_in_game(user_input):
+    if re.match('([A-Ha-h][1-8])', user_input):
+        return True
+    return False
+
+def check_start_player_input(user_input):
+    if (user_input == "H" or user_input == "AI"):
+        return True
+    return False
 
 def get_move():
-    src = input("From: ")
-    dest = input("To: ")
+    while True:
+        src = input("From: ")
+        if(check_user_input_in_game(src)):
+            break
+        else:
+            print("Input invalid -> ( valid e.g. H5 )")
+    while True:        
+        dest = input("To: ")
+        if(check_user_input_in_game(dest)):
+            break
+        else: 
+            print("Input invalid -> ( valid e.g. H5 )")
     promo = input("Promo: ").lower()
     promo_piece = next(
             (p for p in Piece if p.to_char() == promo),
@@ -25,16 +46,24 @@ def main():
     print("Who starts? ( type \"H\" or \"AI\" )")
     print("\n")
     player_turn = "H"
-    first_player = input()
-    
-    if(first_player == "H"):
-        player_turn = "H"
-    elif(first_player == "AI"):
-        player_turn = "AI"
 
     while True:
-        if(player_turn == "H"): 
-            print("Enter your move")
+        first_player = input().upper()
+        if(check_start_player_input(first_player)):
+            if(first_player == "H"):
+                player_turn = "H"
+                break
+            elif(first_player == "AI"):
+                player_turn = "AI"
+                break
+        else:
+            print("Invalid input -> Type either \"H\" or \"AI\"")
+    
+    while True:
+        if(player_turn == "H"):
+            print("Player turn: H")
+            print("\n")
+            print("Enter your move ( e.g. From: B2 or To: B3 )")
             print("\n")
             player_move = get_move()
             board = board.apply_move(player_move)
