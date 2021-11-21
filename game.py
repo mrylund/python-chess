@@ -2,7 +2,7 @@ from ai.eval import evaluate
 from chessboard import ChessBoard
 from move import Move
 from square import Square
-from constants import Piece
+from constants import Piece, Color
 import re
 
 def check_user_input_in_game(user_input):
@@ -15,23 +15,33 @@ def check_start_player_input(user_input):
         return True
     return False
 
-def get_move():
+def get_move(board):
+    src, dest, promo = "", "", ""
+    accepted_chars = {'q', 'r', 'n', 'b'}
+    
     while True:
-        src = input("From: ")
+        src = input("From: ").upper()
         if(check_user_input_in_game(src)):
             break
         else:
             print("Input invalid -> ( valid e.g. H5 )")
     while True:        
-        dest = input("To: ")
+        dest = input("To:   ").upper()
         if(check_user_input_in_game(dest)):
+            if ((board.color == Color.WHITE and dest[1] == "8") or (board.color == Color.BLACK and dest[1] == "1")):
+                while True:
+                    print("Type what you would like to promote your piece to ( e.g \"r\", \"q\", \"n\" or \"b\" ) ")
+                    promo = input("Promo: ").lower()
+                    if(promo.lower() in accepted_chars):
+                        break
+                    else:
+                        print("Invalid input -> ( try e.g. \"r\", \"q\", \"n\" or \"b\" ) \n")
+                        
             break
         else: 
             print("Input invalid -> ( valid e.g. H5 )")
-    promo = input("Promo: ").lower()
-    promo_piece = next(
-            (p for p in Piece if p.to_char() == promo),
-            None)
+        
+    promo_piece = next((p for p in Piece if p.to_char() == promo and p.to_char() != 'k'), None)
     return Move(Square.from_str(src), Square.from_str(dest), promo_piece)
 
 def main():
@@ -60,12 +70,13 @@ def main():
             print("Invalid input -> Type either \"H\" or \"AI\"")
     
     while True:
+        print("Eval: ", evaluate(board))
         if(player_turn == "H"):
             print("Player turn: H")
             print("\n")
             print("Enter your move ( e.g. From: B2 or To: B3 )")
             print("\n")
-            player_move = get_move()
+            player_move = get_move(board)
             board = board.apply_move(player_move)
             evaluate(board)
             print("\n")
@@ -74,7 +85,7 @@ def main():
             print("\n")
             player_turn = "AI"
         elif(player_turn == "AI"):
-            engine_move = get_move()
+            engine_move = get_move(board)
             print(engine_move)
             board = board.apply_move(engine_move)
             print("\n")
