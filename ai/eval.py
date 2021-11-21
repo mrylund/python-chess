@@ -1,11 +1,6 @@
 from aenum import Enum, skip
 import numpy as np
-
-PAWN_VALUE = 100
-KNIGHT_VALUE = 350
-BISHOP_VALUE = 350
-ROOK_VALUE = 525
-QUEEN_VALUE = 1000
+from constants import Color, Piece
 
 
 class Score(Enum):
@@ -125,7 +120,9 @@ class PositionScore(Enum):
 
 
 def evaluate(board):
-    print(eval_all_pieces(board))
+    #print('Piece values: ', eval_all_pieces(board))
+    #print('Piece location values: ', eval_all_piece_locations(board))
+    return eval_all_pieces(board) + eval_all_piece_locations(board)
 
 def eval_piece(board, piece):
     return np.int32(board.pieces[board.color][piece].item().bit_count()) - np.int32(board.pieces[~board.color][piece].item().bit_count())
@@ -141,11 +138,6 @@ def eval_all_pieces(board):
         Score.KING.value * eval_piece(board, Piece.KING)
     )
 
-def eval_all_piece_locations(board):
-    return (
-        eval_piece_location()
-    )
-    
 
 def eval_piece_location(piece, scores):
     points = 0
@@ -159,4 +151,15 @@ def eval_piece_location(piece, scores):
 
     return points
 
-print(eval_piece_location(np.uint64(0x00FF000000000000), PositionScore.Black.PAWN.value))
+
+def eval_all_piece_locations(board):
+    col = board.color == Color.WHITE and PositionScore.White or PositionScore.Black
+    enemy = board.color == Color.WHITE and PositionScore.Black or PositionScore.White
+    return (
+        eval_piece_location(board.pieces[~board.color][Piece.PAWN], enemy.PAWN.value) - eval_piece_location(board.pieces[board.color][Piece.PAWN], col.PAWN.value) +
+        eval_piece_location(board.pieces[~board.color][Piece.KNIGHT], enemy.KNIGHT.value) - eval_piece_location(board.pieces[board.color][Piece.KNIGHT], col.KNIGHT.value) +
+        eval_piece_location(board.pieces[~board.color][Piece.BISHOP], enemy.BISHOP.value) - eval_piece_location(board.pieces[board.color][Piece.BISHOP], col.BISHOP.value) +
+        eval_piece_location(board.pieces[~board.color][Piece.ROOK], enemy.ROOK.value) - eval_piece_location(board.pieces[board.color][Piece.ROOK], col.ROOK.value) +
+        eval_piece_location(board.pieces[~board.color][Piece.QUEEN], enemy.QUEEN.value) - eval_piece_location(board.pieces[board.color][Piece.QUEEN], col.QUEEN.value)
+        # King has no positional values, hence not included
+    )
