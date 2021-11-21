@@ -21,13 +21,13 @@ def get_move():
         if(check_user_input_in_game(src)):
             break
         else:
-            print("Input invalid -> (valid e.g. H5 )")
+            print("Input invalid -> ( valid e.g. H5 )")
     while True:        
         dest = input("To: ")
         if(check_user_input_in_game(dest)):
             break
         else: 
-            print("Input invalid -> (valid e.g. H5 )")
+            print("Input invalid -> ( valid e.g. H5 )")
     promo = input("Promo: ").lower()
     promo_piece = next(
             (p for p in Piece if p.to_char() == promo),
