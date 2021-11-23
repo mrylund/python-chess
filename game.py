@@ -5,6 +5,7 @@ from square import Square
 from constants import Piece, Color
 import re
 import ai.search as ai
+import movegen
 
 def check_user_input_in_game(user_input):
     if re.match('([A-Ha-h][1-8])', user_input):
@@ -73,11 +74,21 @@ def main():
     while True:
         print("Eval: ", evaluate(board))
         if(player_turn == "H"):
+            #for move in movegen.gen_legal_moves(board):
+            #    print(str(move).split(' -> '))
             print("Player turn: H")
             print("\n")
             print("Enter your move ( e.g. From: B2 or To: B3 )")
             print("\n")
-            player_move = get_move(board)
+            movefound = False
+            while not movefound:
+                player_move = get_move(board)
+                for move in movegen.gen_legal_moves(board):
+                    if str(move) == str(player_move):
+                        movefound = True
+                        break
+                if not movefound:
+                    print('Illegal move, please try again!')
             board = board.apply_move(player_move)
             evaluate(board)
             print("\n")
