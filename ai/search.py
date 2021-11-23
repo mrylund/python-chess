@@ -32,17 +32,23 @@ import movegen
 
 
 
-def search(board, depth, start_time, time_limit):
+def search(board, depth, start_time, time_limit, alpha, beta):
     if(timeit.default_timer() - start_time >= time_limit or depth == 0):
         return evaluate(board)
     
-    max = -sys.maxsize
+    best = -sys.maxsize + 1
     for move in movegen.gen_legal_moves(board):
-        score = -search(board.apply_move(move), depth-1, start_time, time_limit)
-        if score > max:
-            max = score
+        score = -search(board.apply_move(move), depth-1, start_time, time_limit, -alpha, -beta)
+        # if score > best:
+        #     best = score
 
-    return max
+        if score > alpha:
+            alpha = score
+
+        if score >= beta:
+            break
+
+    return alpha
 
 
 
@@ -58,8 +64,8 @@ def iterative_deepening_search(board, time_limit):
         if current_time >= end_time:
             break
         
-        score = -search(board, depth, start_time, time_limit)
-
+        score = -search(board, depth, start_time, time_limit, -sys.maxsize, sys.maxsize)
+        print(depth)
         depth += 1
     
     return score
