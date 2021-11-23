@@ -6,6 +6,7 @@ import movegen
 
 branches_pruned = 0
 branches_visited = 0
+search_depth = 0
 # def negmax(board, start_time, time_limit, depth):
 #     print(timeit.default_timer() - start_time )
 #     if(timeit.default_timer() - start_time >= time_limit or depth == 0):
@@ -57,7 +58,7 @@ def search(board, depth, start_time, time_limit, alpha, beta):
 
 
 def iterative_deepening_search(board, time_limit):
-    global branches_pruned
+    global branches_pruned, search_depth
     start_time = timeit.default_timer()
     end_time = start_time + time_limit
     depth = 1
@@ -71,6 +72,8 @@ def iterative_deepening_search(board, time_limit):
             break
         
         score = -search(board, depth, start_time, time_limit, -sys.maxsize, sys.maxsize)
+        if depth > search_depth:
+            search_depth = depth
         depth += 1
     
     return score
@@ -95,7 +98,4 @@ def find_best_move(board, time_limit):
             max = score
             best_move = move
 
-    print('Branches pruned:', branches_pruned)
-    print('Branches visited: ', branches_visited)
-
-    return best_move, branches_visited, branches_pruned
+    return best_move, branches_visited, branches_pruned, search_depth

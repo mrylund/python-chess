@@ -15,6 +15,7 @@ status ="""
 == AI stats:
 ==    - {states_visited} states visisted
 ==    - {branch_cutoff} branches cut off
+==    - Search depth: {depth}
 ==
 == Move performed:
 ==    {move}
@@ -84,9 +85,9 @@ def main():
             print("Invalid input -> Type either \"H\" or \"AI\"")
     
 
-    print(status.format(player = player_turn,  score = 0, states_visited=0, branch_cutoff=0, move='No move yet', board=str(board)))
+    print(status.format(player = player_turn,  score = 0, states_visited=0, branch_cutoff=0, depth=0, move='No move yet', board=str(board)))
 
-    branches_visited, branches_cutoff = 0, 0
+    branches_visited, branches_cutoff, depth = 0, 0, 0
     while True:
         move = None
         if(player_turn == "H"):
@@ -106,15 +107,15 @@ def main():
             player_turn = "AI"
         elif(player_turn == "AI"):
             prev_player = player_turn
-            engine_move, branches_visited, branches_cutoff = ai.find_best_move(board, 15)
+            engine_move, branches_visited, branches_cutoff, depth = ai.find_best_move(board, 15)
             move = engine_move
             player_turn = "H"
 
         board_value = evaluate(board)
         board = board.apply_move(move)
 
-        print(status.format(player = prev_player,  score = board_value, states_visited=branches_visited, branch_cutoff=branches_cutoff, move=str(move), board=str(board)))
-        branches_visited, branches_cutoff = 0, 0
+        print(status.format(player = prev_player,  score = board_value, states_visited=branches_visited, branch_cutoff=branches_cutoff, depth=depth, move=str(move), board=str(board)))
+        branches_visited, branches_cutoff, depth = 0, 0, 0
 
 if __name__ == "__main__":
     main()
