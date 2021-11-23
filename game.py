@@ -2,10 +2,11 @@ from ai.eval import Score, evaluate
 from chessboard import ChessBoard
 from move import Move
 from square import Square
-from constants import Piece, Color
+from constants import Piece, Color, Rank
 import re
 import ai.search as ai
 import movegen
+import tables
 
 
 status ="""
@@ -48,7 +49,9 @@ def get_move(board):
     while True:        
         dest = input("To:   ").upper()
         if(check_user_input_in_game(dest)):
-            if ((board.color == Color.WHITE and dest[1] == "8") or (board.color == Color.BLACK and dest[1] == "1")):
+            white_promo = Square.from_str(src).to_bitboard() & tables.RANKS[Rank.SEVEN] != tables.EMPTY_BB
+            black_promo = Square.from_str(src).to_bitboard() & tables.RANKS[Rank.TWO] != tables.EMPTY_BB
+            if (board.color == Color.WHITE and white_promo) or (board.color == Color.BLACK and black_promo):
                 while True:
                     print("Type what you would like to promote your piece to ( e.g \"r\", \"q\", \"n\" or \"b\" ) ")
                     promo = input("Promo: ").lower()
