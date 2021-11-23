@@ -124,7 +124,7 @@ class PositionScore(Enum):
 def evaluate(board):
     #print('Piece values: ', eval_all_pieces(board))
     #print('Piece location values: ', eval_all_piece_locations(board))
-    return eval_all_pieces(board) + eval_all_piece_locations(board) + eval_mobility(board)
+    return eval_all_pieces(board) + eval_all_piece_locations(board)# + eval_mobility(board)
 
 def eval_piece(board, piece):
     return np.int32(board.pieces[board.color][piece].item().bit_count()) - np.int32(board.pieces[~board.color][piece].item().bit_count())
