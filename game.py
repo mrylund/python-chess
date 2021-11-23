@@ -1,4 +1,4 @@
-from ai.eval import evaluate
+from ai.eval import Score, evaluate
 from chessboard import ChessBoard
 from move import Move
 from square import Square
@@ -6,6 +6,23 @@ from constants import Piece, Color
 import re
 import ai.search as ai
 import movegen
+
+
+status ="""
+===================================
+== Eval for {player} is {score} points
+== 
+== AI stats:
+==    - {states_visited} states visisted
+==    - {branch_cutoff} branches cut off
+==
+== Move performed:
+==    {move}
+===================================
+{board}
+===================================
+"""
+
 
 def check_user_input_in_game(user_input):
     if re.match('([A-Ha-h][1-8])', user_input):
@@ -51,12 +68,7 @@ def main():
     # This is really just for generating example game gif
     board = ChessBoard()
     board.init_game()
-    print("Initial board")
-    print("\n")
-    print(board)
-    print("\n")
     print("Who starts? ( type \"H\" or \"AI\" )")
-    print("\n")
     player_turn = "H"
 
     while True:
@@ -71,15 +83,17 @@ def main():
         else:
             print("Invalid input -> Type either \"H\" or \"AI\"")
     
+
+    print(status.format(player = player_turn,  score = 0, states_visited=0, branch_cutoff=0, move='No move yet', board=str(board)))
+
+    branches_visited, branches_cutoff = 0, 0
     while True:
-        print("Eval: ", evaluate(board))
+        move = None
         if(player_turn == "H"):
+            prev_player = 'Human'
             #for move in movegen.gen_legal_moves(board):
             #    print(str(move).split(' -> '))
-            print("Player turn: H")
-            print("\n")
             print("Enter your move ( e.g. From: B2 or To: B3 )")
-            print("\n")
             movefound = False
             while not movefound:
                 player_move = get_move(board)
@@ -89,24 +103,18 @@ def main():
                         break
                 if not movefound:
                     print('Illegal move, please try again!')
-            board = board.apply_move(player_move)
-            evaluate(board)
-            print("\n")
-            print("Board is now:")
-            print(board)
-            print("\n")
             player_turn = "AI"
         elif(player_turn == "AI"):
-            engine_move = ai.find_best_move(board, 15)
-            #engine_move = get_move(board)
-            print(engine_move)
-            board = board.apply_move(engine_move)
-            print("\n")
-            print("Board is now:")
-            print(board)
-            print("\n")
+            prev_player = player_turn
+            engine_move, branches_visited, branches_cutoff = ai.find_best_move(board, 15)
+            move = engine_move
             player_turn = "H"
 
+        board_value = evaluate(board)
+        board = board.apply_move(move)
+
+        print(status.format(player = prev_player,  score = board_value, states_visited=branches_visited, branch_cutoff=branches_cutoff, move=str(move), board=str(board)))
+        branches_visited, branches_cutoff = 0, 0
 
 if __name__ == "__main__":
     main()
