@@ -1,5 +1,6 @@
 from aenum import Enum, skip
 import numpy as np
+import movegen
 from constants import Color, Piece
 
 
@@ -10,6 +11,7 @@ class Score(Enum):
     ROOK = np.int32(525)
     QUEEN = np.int32(1000)
     KING = np.int32(10000)
+    CHECKMATE = np.int32(-1000000)
 
 class PositionScore(Enum):
     @skip
@@ -122,7 +124,7 @@ class PositionScore(Enum):
 def evaluate(board):
     #print('Piece values: ', eval_all_pieces(board))
     #print('Piece location values: ', eval_all_piece_locations(board))
-    return eval_all_pieces(board) + eval_all_piece_locations(board)
+    return eval_all_pieces(board) + eval_all_piece_locations(board) + eval_mobility(board)
 
 def eval_piece(board, piece):
     return np.int32(board.pieces[board.color][piece].item().bit_count()) - np.int32(board.pieces[~board.color][piece].item().bit_count())
@@ -163,3 +165,11 @@ def eval_all_piece_locations(board):
         eval_piece_location(board.pieces[~board.color][Piece.QUEEN], enemy.QUEEN.value) - eval_piece_location(board.pieces[board.color][Piece.QUEEN], col.QUEEN.value)
         # King has no positional values, hence not included
     )
+
+def eval_mobility(board):
+    movecount = len(list(movegen.gen_legal_moves(board)))
+    if movecount == 0:
+        return Score.CHECKMATE
+    return 0
+    #return movecount * Score.MOVE.value
+

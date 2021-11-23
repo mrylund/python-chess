@@ -94,4 +94,6 @@ def find_best_move(board, time_limit):
 
     print('Branches pruned:', branches_pruned)
     print('Branches visited: ', branches_visited)
+    branches_visited = 0
+    branches_pruned = 0
     return best_move
