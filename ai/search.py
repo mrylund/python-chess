@@ -4,7 +4,8 @@ import sys
 from ai.eval import evaluate
 import movegen
 
-
+branches_pruned = 0
+branches_visited = 0
 # def negmax(board, start_time, time_limit, depth):
 #     print(timeit.default_timer() - start_time )
 #     if(timeit.default_timer() - start_time >= time_limit or depth == 0):
@@ -33,6 +34,8 @@ import movegen
 
 
 def search(board, depth, start_time, time_limit, alpha, beta):
+    global branches_pruned, branches_visited
+    branches_visited += 1
     if(timeit.default_timer() - start_time >= time_limit or depth == 0):
         return evaluate(board)
     
@@ -46,6 +49,7 @@ def search(board, depth, start_time, time_limit, alpha, beta):
             alpha = score
 
         if score >= beta:
+            branches_pruned += 1
             break
 
     return alpha
@@ -53,6 +57,7 @@ def search(board, depth, start_time, time_limit, alpha, beta):
 
 
 def iterative_deepening_search(board, time_limit):
+    global branches_pruned
     start_time = timeit.default_timer()
     end_time = start_time + time_limit
     depth = 1
@@ -62,10 +67,10 @@ def iterative_deepening_search(board, time_limit):
     while (True):
         current_time = timeit.default_timer()
         if current_time >= end_time:
+            branches_pruned +=1
             break
         
         score = -search(board, depth, start_time, time_limit, -sys.maxsize, sys.maxsize)
-        print(depth)
         depth += 1
     
     return score
@@ -73,6 +78,7 @@ def iterative_deepening_search(board, time_limit):
 
 
 def find_best_move(board, time_limit):
+    global branches_pruned, branches_visited
     start_time = timeit.default_timer()
     max = -sys.maxsize
     move_num = 0
@@ -86,4 +92,6 @@ def find_best_move(board, time_limit):
             max = score
             best_move = move
 
+    print('Branches pruned:', branches_pruned)
+    print('Branches visited: ', branches_visited)
     return best_move
