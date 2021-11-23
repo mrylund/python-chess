@@ -8,6 +8,7 @@ import ai.search as ai
 import movegen
 import tables
 
+load_game = False
 
 status ="""
 ===================================
@@ -32,7 +33,7 @@ def check_user_input_in_game(user_input):
     return False
 
 def check_start_player_input(user_input):
-    if (user_input == "H" or user_input == "AI"):
+    if (user_input == "H" or user_input == "AI" or user_input == "LOAD"):
         return True
     return False
 
@@ -70,9 +71,10 @@ def get_move(board):
 def main():
     # NOTE: currently doesn't validate move or stop at checkmate, just plays
     # This is really just for generating example game gif
+    global load_game
     board = ChessBoard()
     board.init_game()
-    print("Who starts? ( type \"H\" or \"AI\" )")
+    print("Who starts? ( type \"H\" or \"AI\" or \"Load\" )")
     player_turn = "H"
 
     while True:
@@ -84,10 +86,16 @@ def main():
             elif(first_player == "AI"):
                 player_turn = "AI"
                 break
+            elif(first_player == "LOAD"):
+                load_game = True
+                break
         else:
             print("Invalid input -> Type either \"H\" or \"AI\"")
     
-
+    if load_game:
+        fen = input('FEN string: ') # TODO: Implement properly, loads board but ignores player turn
+        board.set_fen(fen)
+        print(board)
     print(status.format(player = player_turn,  score = 0, states_visited=0, branch_cutoff=0, depth=0, move='No move yet', board=str(board)))
 
     branches_visited, branches_cutoff, depth = 0, 0, 0

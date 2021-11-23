@@ -150,3 +150,59 @@ class ChessBoard(object):
                 self.combined_color[c] |= self.pieces[c][p]
 
         self.combined_all = self.combined_color[Color.WHITE] | self.combined_color[Color.BLACK]
+
+    def set_fen(self, fen):
+        self.pieces[Color.WHITE][Piece.PAWN] = np.uint64(0x0000000000000000)
+        self.pieces[Color.WHITE][Piece.KNIGHT] = np.uint64(0x0000000000000000)
+        self.pieces[Color.WHITE][Piece.BISHOP] = np.uint64(0x0000000000000000)
+        self.pieces[Color.WHITE][Piece.ROOK] = np.uint64(0x0000000000000000)
+        self.pieces[Color.WHITE][Piece.QUEEN] = np.uint64(0x0000000000000000)
+        self.pieces[Color.WHITE][Piece.KING] = np.uint64(0x0000000000000000)
+
+        self.pieces[Color.BLACK][Piece.PAWN] = np.uint64(0x0000000000000000)
+        self.pieces[Color.BLACK][Piece.KNIGHT] = np.uint64(0x0000000000000000)
+        self.pieces[Color.BLACK][Piece.BISHOP] = np.uint64(0x0000000000000000)
+        self.pieces[Color.BLACK][Piece.ROOK] = np.uint64(0x0000000000000000)
+        self.pieces[Color.BLACK][Piece.QUEEN] = np.uint64(0x0000000000000000)
+        self.pieces[Color.BLACK][Piece.KING] = np.uint64(0x0000000000000000)
+        row_count = 7
+        for row in fen.replace(' ', '/').split('/'):
+            if row_count < 0:
+                break
+            c_count = 0
+            for c in row:
+                print(c)
+                col = None
+                if c.isupper():
+                    col = Color.WHITE
+                elif c.islower():
+                    col = Color.BLACK
+
+                c = c.lower()
+                if c in "12345678":
+                    c_count += int(c)
+                    continue
+                if Piece.PAWN.to_char() == c:
+                    temp = np.uint64(0x1) << np.uint64(row_count * 8 + c_count)
+                    self.pieces[col][Piece.PAWN] |= temp
+                elif Piece.KNIGHT.to_char() == c:
+                    temp = np.uint64(0x1) << np.uint64(row_count * 8 + c_count)
+                    self.pieces[col][Piece.KNIGHT] |= temp
+                elif Piece.BISHOP.to_char() == c:
+                    temp = np.uint64(0x1) << np.uint64(row_count * 8 + c_count)
+                    self.pieces[col][Piece.BISHOP] |= temp
+                elif Piece.ROOK.to_char() == c:
+                    temp = np.uint64(0x1) << np.uint64(row_count * 8 + c_count)
+                    self.pieces[col][Piece.ROOK] |= temp
+                elif Piece.QUEEN.to_char() == c:
+                    temp = np.uint64(0x1) << np.uint64(row_count * 8 + c_count)
+                    self.pieces[col][Piece.QUEEN] |= temp
+                elif Piece.KING.to_char() == c:
+                    temp = np.uint64(0x1) << np.uint64(row_count * 8 + c_count)
+                    self.pieces[col][Piece.KING] |= temp
+                    print('King Color: ', col)
+                    print('King field: ', (row_count * 8 + c_count))
+                
+                c_count += 1
+            row_count -= 1
+
