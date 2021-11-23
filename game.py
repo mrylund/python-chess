@@ -37,7 +37,7 @@ def check_start_player_input(user_input):
 
 def get_move(board):
     src, dest, promo = "", "", ""
-    accepted_chars = {'q', 'r', 'n', 'b'}
+    accepted_chars = {'q', 'r', 'n', 'b', ''}
     
     while True:
         src = input("From: ").upper()
