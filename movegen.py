@@ -96,7 +96,6 @@ def get_rook_moves_bb(sq, board):
 def get_queen_moves_bb(sq, board):
     return get_rook_moves_bb(sq, board) | get_bishop_moves_bb(sq, board)
 
-
 # Move generators
 
 def gen_piece_moves(src, board, piece):
@@ -131,6 +130,29 @@ def gen_piece_moves(src, board, piece):
         yield Move(src, dest)
 
 
+def gen_piece_attack_moves(src, board, piece):
+    opp_pieces = board.combined_color[~board.color]
+
+    if piece == Piece.PAWN:
+        moveset = get_pawn_moves_bb(src, board) & opp_pieces
+    elif piece == Piece.KNIGHT:
+        moveset = get_knight_moves_bb(src, board) & opp_pieces
+    elif piece == Piece.BISHOP:
+        moveset = get_bishop_moves_bb(src, board) & opp_pieces
+    elif piece == Piece.ROOK:
+        moveset = get_rook_moves_bb(src, board) & opp_pieces
+    elif piece == Piece.QUEEN:
+        moveset = get_queen_moves_bb(src, board) & opp_pieces
+    elif piece == Piece.KING:
+        moveset = get_king_moves_bb(src, board) & opp_pieces
+    else:
+        # This should never happen
+        raise RuntimeError("Invalid piece: %s" % str(piece))
+
+    for dest in bitboard.occupied_squares(moveset):
+        yield Move(src, dest)
+
+
 def gen_moves(board):
     # NOTE: generates pseudo-legal moves
     for piece in Piece:
@@ -138,6 +160,13 @@ def gen_moves(board):
         for src in bitboard.occupied_squares(piece_bb):
             yield from gen_piece_moves(src, board, piece)
 
+def gen_attack_moves(board):
+    for piece in Piece:
+        piece_bb = board.get_piece_bb(piece)
+        for src in bitboard.occupied_squares(piece_bb):
+            yield from gen_piece_attack_moves(src, board, piece)
+
+    
 
 def gen_legal_moves(board):
     return itertools.filterfalse(lambda m: leaves_in_check(board, m), gen_moves(board))
