@@ -209,3 +209,9 @@ class ChessBoard(object):
         else:
             self.color = Color.BLACK
 
+        for p in Piece:
+            for c in Color:
+                self.combined_color[c] |= self.pieces[c][p]
+
+        self.combined_all = self.combined_color[Color.WHITE] | self.combined_color[Color.BLACK]
+
