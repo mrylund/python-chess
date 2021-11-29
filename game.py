@@ -74,9 +74,21 @@ def main():
     global load_game
     board = ChessBoard()
     board.init_game()
-    print("Who starts? ( type \"H\" or \"AI\" or \"Load\" )")
-    player_turn = "H"
+    print('Do you want to load FEN string? (y/n)')
+    while True:
+        ans = input().upper()
+        if ans.lower() == 'y':
+            load_game = True
+            break
+        elif ans.lower() == 'n':
+            load_game = False
+            break
+    
+    if load_game:
+        fen = input('FEN string: ')
+        board.set_fen(fen)
 
+    print("Who starts? ( type \"H\" or \"AI\" or \"Load\" )")
     while True:
         first_player = input().upper()
         if(check_start_player_input(first_player)):
@@ -86,16 +98,9 @@ def main():
             elif(first_player == "AI"):
                 player_turn = "AI"
                 break
-            elif(first_player == "LOAD"):
-                load_game = True
-                break
         else:
             print("Invalid input -> Type either \"H\" or \"AI\"")
-    
-    if load_game:
-        fen = input('FEN string: ') # TODO: Implement properly, loads board but ignores player turn
-        board.set_fen(fen)
-        print(board)
+
     print(status.format(player = player_turn,  score = 0, states_visited=0, branch_cutoff=0, depth=0, move='No move yet', board=str(board)))
 
     branches_visited, branches_cutoff, depth = 0, 0, 0

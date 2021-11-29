@@ -166,12 +166,12 @@ class ChessBoard(object):
         self.pieces[Color.BLACK][Piece.QUEEN] = np.uint64(0x0000000000000000)
         self.pieces[Color.BLACK][Piece.KING] = np.uint64(0x0000000000000000)
         row_count = 7
-        for row in fen.replace(' ', '/').split('/'):
+        fen = fen.split(' ')
+        for row in fen[0].split('/'):
             if row_count < 0:
                 break
             c_count = 0
             for c in row:
-                print(c)
                 col = None
                 if c.isupper():
                     col = Color.WHITE
@@ -200,9 +200,12 @@ class ChessBoard(object):
                 elif Piece.KING.to_char() == c:
                     temp = np.uint64(0x1) << np.uint64(row_count * 8 + c_count)
                     self.pieces[col][Piece.KING] |= temp
-                    print('King Color: ', col)
-                    print('King field: ', (row_count * 8 + c_count))
                 
                 c_count += 1
             row_count -= 1
+        turn = fen[1]
+        if turn == 'w':
+            self.color = Color.WHITE
+        else:
+            self.color = Color.BLACK
 
