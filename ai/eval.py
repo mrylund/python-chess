@@ -1,5 +1,6 @@
 from aenum import Enum, skip
 import numpy as np
+from chessboard import ChessBoard
 import movegen
 from constants import Color, Piece
 
@@ -12,6 +13,19 @@ class Score(Enum):
     QUEEN = np.int32(1000)
     KING = np.int32(10000)
     CHECKMATE = np.int32(-1000000)
+    CENTER = np.int32(5)
+
+CENTER = np.uint64(0x00003C3C3C3C0000)
+
+MVV_LVA = [
+    [15, 14, 13, 12, 11, 10, 0],
+    [25, 24, 23, 22, 21, 20, 0],
+    [35, 34, 33, 32, 31, 30, 0],
+    [45, 44, 43, 42, 41, 40, 0],
+    [55, 54, 53, 52, 51, 50, 0],
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0],
+]
 
 class PositionScore(Enum):
     @skip
@@ -124,7 +138,7 @@ class PositionScore(Enum):
 def evaluate(board):
     #print('Piece values: ', eval_all_pieces(board))
     #print('Piece location values: ', eval_all_piece_locations(board))
-    return eval_all_pieces(board) + eval_all_piece_locations(board)# + eval_mobility(board)
+    return eval_all_pieces(board) + eval_mobility(board) - eval_mobility(board, color=~board.color) + eval_pieces_center(board) # + eval_all_piece_locations(board) +
 
 def eval_piece(board, piece):
     return np.int32(board.pieces[board.color][piece].item().bit_count()) - np.int32(board.pieces[~board.color][piece].item().bit_count())
@@ -140,6 +154,9 @@ def eval_all_pieces(board):
         Score.KING.value * eval_piece(board, Piece.KING)
     )
 
+
+def eval_pieces_center(board):
+    return Score.CENTER.value * ((board.combined_color[board.color] ^ board.pieces[board.color][Piece.KING]) & CENTER).item().bit_count()
 
 def eval_piece_location(piece, scores):
     points = 0
@@ -166,10 +183,25 @@ def eval_all_piece_locations(board):
         # King has no positional values, hence not included
     )
 
-def eval_mobility(board):
-    movecount = len(list(movegen.gen_legal_moves(board)))
-    if movecount == 0:
-        return Score.CHECKMATE
-    return 0
-    #return movecount * Score.MOVE.value
+def eval_mobility(board, color=None):
+    if color is None:
+        color = board.color
+    if color != board.color:
+        new_board = ChessBoard()
+        new_board.color = color
+        new_board.pieces = board.pieces
+        new_board.combined_all = board.combined_all
+        new_board.combined_color = board.combined_color
+        moves = movegen.gen_attack_moves(new_board)
+    else:
+        moves = movegen.gen_attack_moves(board)
 
+
+    points = 0
+    for move in moves:
+        victim = board.piece_on(move.dest)
+        victim = victim is None and 6 or victim
+        killer = board.piece_on(move.src)
+        killer = killer is None and 6 or killer
+        points += MVV_LVA[victim][killer]
+    return points

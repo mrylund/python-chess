@@ -127,6 +127,10 @@ def main():
             move = engine_move
             player_turn = "H"
 
+        if move is None:
+            print('GAME OVER')
+            return
+
         board_value = evaluate(board)
         board = board.apply_move(move)
 

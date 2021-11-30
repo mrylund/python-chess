@@ -8,32 +8,9 @@ import movegen
 branches_pruned = 0
 branches_visited = 0
 search_depth = 0
-# def negmax(board, start_time, time_limit, depth):
-#     print(timeit.default_timer() - start_time )
-#     if(timeit.default_timer() - start_time >= time_limit or depth == 0):
-#         return evaluate(board)
-    
-#     max = -sys.maxsize
-#     for move in movegen.gen_legal_moves(board):
-#         score = -negmax(board.apply_move(move), start_time, time_limit, depth - 1)
-#         if score > max:
-#             max = score
-
-#     return max
-
-# def find_best_move(board, time_limit):
-#     start_time = timeit.default_timer()
-#     max = -sys.maxsize
-#     for move  in movegen.gen_legal_moves(board):
-#         score = -negmax(board.apply_move(move), start_time, time_limit, 10)
-#         if score > max:
-#             max = score
-#             best_move = move
-
-#     return best_move
 
 
-def quiesce(board, alpha, beta):
+def quiesce(board, alpha, beta, depth):
     stand_pat = evaluate(board)
 
     if stand_pat >= beta:
@@ -41,58 +18,31 @@ def quiesce(board, alpha, beta):
     
     alpha = max(alpha, stand_pat)
 
-    movecount = 0
     for move in movegen.gen_attack_moves(board):
-        print(move)
-        movecount += 1
-        score = -quiesce(board.apply_move(move), -alpha, -beta)
+        score = -quiesce(board.apply_move(move), -beta, -alpha, depth-1)
 
         if score >= beta:
             return beta
 
         alpha = max(alpha, score)
-    
-    if movecount == 0:
-        return stand_pat
 
     return alpha
     
-    
-
-
-
-
 
 def search(board, depth, start_time, time_limit, alpha, beta):
     global branches_pruned, branches_visited
     branches_visited += 1
-
-    best_score = -sys.maxsize
-    b = beta
-
     if(timeit.default_timer() - start_time >= time_limit or depth == 0):
-        
-        print(evaluate(board), quiesce(board, alpha, beta))
-        return quiesce(board, alpha, beta)
+        return evaluate(board) #quiesce(board, -beta, -alpha, 8)
     
+    best = -sys.maxsize + 1
     for move in movegen.gen_legal_moves(board):
-        score = -search(board.apply_move(move), depth-1, start_time, time_limit, -alpha, -b)
-        # if score > best:
-        #     best = score
-
-        if score > best_score:
-            if alpha < score < beta:
-                best_score = max(score, best_score)
-            else:
-                best_score = -search(board.apply_move(move), depth-1, start_time, time_limit, -beta, -score)
-
-        alpha = max(score, alpha)
+        best = max(best, -search(board.apply_move(move), depth-1, start_time, time_limit, -beta, -beta))
+        alpha = max(alpha, best)
         if alpha >= beta:
-            return alpha
+            break
 
-        b = alpha + 1
-
-    return alpha
+    return best
 
 
 
@@ -110,7 +60,7 @@ def iterative_deepening_search(board, time_limit):
             branches_pruned +=1
             break
         
-        score = -search(board, depth, start_time, time_limit, -100000, 100000)
+        score = -search(board, depth, start_time, time_limit, -1000000, 1000000)
         if depth > search_depth:
             search_depth = depth
         depth += 1
@@ -123,14 +73,14 @@ def find_best_move(board, time_limit):
     global branches_pruned, branches_visited
     branches_visited = 0
     branches_pruned = 0
-    for move in movegen.gen_attack_moves(board):
-        print(move)
 
-    start_time = timeit.default_timer()
     max = -sys.maxsize
     move_num = 0
     for move in movegen.gen_legal_moves(board):
         move_num += 1
+        
+    if move_num == 0:
+        return None, None, None, None
 
     search_time_limit = time_limit / move_num
     for move  in movegen.gen_legal_moves(board):
