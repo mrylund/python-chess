@@ -40,6 +40,7 @@ def search(board, depth, start_time, time_limit, alpha, beta):
         best = max(best, -search(board.apply_move(move), depth-1, start_time, time_limit, -beta, -beta))
         alpha = max(alpha, best)
         if alpha >= beta:
+            branches_pruned += 1
             break
 
     return best
