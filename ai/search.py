@@ -37,7 +37,7 @@ def search(board, depth, start_time, time_limit, alpha, beta):
     
     best = -sys.maxsize + 1
     for move in movegen.gen_legal_moves(board):
-        best = max(best, -search(board.apply_move(move), depth-1, start_time, time_limit, -beta, -beta))
+        best = max(best, -search(board.apply_move(move), depth-1, start_time, time_limit, -beta, -alpha))
         alpha = max(alpha, best)
         if alpha >= beta:
             branches_pruned += 1
@@ -53,8 +53,6 @@ def iterative_deepening_search(board, time_limit):
     end_time = start_time + time_limit
     depth = 1
     score = 0
-    cutOff = False
-
     while (True):
         current_time = timeit.default_timer()
         if current_time >= end_time:
