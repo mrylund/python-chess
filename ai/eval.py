@@ -18,13 +18,13 @@ class Score(Enum):
 CENTER = np.uint64(0x00003C3C3C3C0000)
 
 MVV_LVA = [
-    [15, 14, 13, 12, 11, 10, 0],
-    [25, 24, 23, 22, 21, 20, 0],
-    [35, 34, 33, 32, 31, 30, 0],
-    [45, 44, 43, 42, 41, 40, 0],
-    [55, 54, 53, 52, 51, 50, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
+    [15, 14, 13, 12, 11, 10, 0], # victim P, attacker P, N, B, R, Q, K, None
+    [25, 24, 23, 22, 21, 20, 0], # victim N, attacker P, N, B, R, Q, K, None
+    [35, 34, 33, 32, 31, 30, 0], # victim B, attacker P, N, B, R, Q, K, None
+    [45, 44, 43, 42, 41, 40, 0], # victim R, attacker P, N, B, R, Q, K, None
+    [55, 54, 53, 52, 51, 50, 0], # victim Q, attacker P, N, B, R, Q, K, None
+    [0, 0, 0, 0, 0, 0, 0], # victim K, attacker P, N, B, R, Q, K, None
+    [0, 0, 0, 0, 0, 0, 0], # victim None, attacker P, N, B, R, Q, K, None
 ]
 
 class PositionScore(Enum):
@@ -156,7 +156,7 @@ def eval_all_pieces(board):
 
 
 def eval_pieces_center(board):
-    return Score.CENTER.value * ((board.combined_color[board.color] ^ board.pieces[board.color][Piece.KING]) & CENTER).item().bit_count()
+    return Score.CENTER.value * (board.combined_color[board.color] & CENTER).item().bit_count()
 
 def eval_piece_location(piece, scores):
     points = 0
